@@ -10,6 +10,8 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/readFile.cpp
     src/ping.cpp
+    src/bot.cpp
+    src/background.cpp
 )
  
 # Find our pre-installed DPP package (using FindDPP.cmake).
