@@ -20,7 +20,7 @@ void backgroundThread(std::vector<std::string> envData){
     bot.on_ready([&bot, &envData](const dpp::ready_t& event){
         for(int i = 0; i < 10; i++){
             //sleep for set time in seconds
-            sleep(10);
+            // sleep(10);
 
             //we use promises to get data out of the callback functions from bot.request
             std::promise<int> promiseStatus;
@@ -51,16 +51,21 @@ void backgroundThread(std::vector<std::string> envData){
             std::cout << statusInt << std::endl; 
             std::cout << homeInt << std::endl; 
 
-            // create a message
-            dpp::message message(dpp::snowflake(473179069673111554), pingObj.second);
+            std::vector<std::string> channels = readFile("channels.txt");
 
-            //send message
-            bot.message_create(message, [&bot](const dpp::confirmation_callback_t& callback){
-                if (callback.is_error()){
-                    //log error
-                    std::cout << "failed to send message" << std::endl;
-                }
-            });
+            for(int i = 0; i < channels.size(); i++){
+                // create a message
+                long long channel_id = std::stoll(channels[i]);
+                dpp::message message(dpp::snowflake(channel_id), pingObj.second);
+
+                //send message
+                bot.message_create(message, [&bot](const dpp::confirmation_callback_t& callback){
+                    if (callback.is_error()){
+                        //log error
+                        std::cout << "failed to send message" << std::endl;
+                    }
+                });
+            }
 
         }
         
