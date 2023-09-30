@@ -1,0 +1,29 @@
+#include <iostream>
+#include <cstdlib>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <utility>
+#include <regex>
+
+#include "ping.h"
+
+std::pair<bool, std::string> ping(std::string url){
+    //command string made of url
+    std::string command = std::string("ping ") + url + " -c 2 -W 1 >ping.txt";
+    //run the command
+    std::system(command.c_str());
+    //read the command output from the file into string
+    std::ifstream pingFile("ping.txt");
+    std::ostringstream ss;
+    ss << pingFile.rdbuf();
+    std::string pingStr = ss.str();
+
+    //parse the ping status
+    std::regex expression("(2 packets transmitted, 2 received, 0?)");
+    bool up = std::regex_search(pingStr, expression);
+    
+    //return a status and the ping output
+    std::pair<bool, std::string> pingObj(up, pingStr);
+    return pingObj;
+}
