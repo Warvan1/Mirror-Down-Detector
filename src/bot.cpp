@@ -44,18 +44,76 @@ void botThread(std::vector<std::string> envData){
 
                 //add channel to file if not already there
                 if(channelInFile == false){
+                    //add channel to vector
                     channels.push_back(std::to_string(e_channel_id));
-                    std::cout << channels[0] << std::endl;
+                    //write channel vector to file
                     std::ofstream channelFile;
                     channelFile.open("channels.txt");
                     for(int i = 0; i < channels.size(); i++){
                         channelFile << channels[i] << std::endl;
                     }
                     channelFile.close();
+
                     event.reply("this channel will now recieve down-detection messages.");
                 }
                 else{
                     event.reply("this channel is already recieving down-detection messages.");
+                }
+            }
+            else{
+                event.reply("You dont have permission to use that command.");
+            }
+        }
+        
+        //use this command to remove channels from the watch-mirror list
+        if (event.command.get_command_name() == "watch-mirror-delete") {
+            //channel id
+            uint64_t e_channel_id = event.command.channel_id;
+            //user object
+            dpp::user e_user = event.command.get_issuing_user();
+            //guild object
+            dpp::guild e_guild = event.command.get_guild();
+            //member object
+            dpp::guild_member e_member = e_guild.members.find(e_user.id)->second;
+            //members permissions
+            dpp::permission e_permissions = e_guild.base_permissions(e_member);
+            //bool representing mod status of the user
+            bool is_mod = e_permissions.can(dpp::p_kick_members, dpp::p_ban_members);
+
+            if(is_mod == true){
+                //read the channel file into a list of channels
+                std::vector<std::string> channels = readFile("channels.txt");
+
+                //check file to make sure that channel is there already
+                bool channelInFile = false;
+                for(int i = 0; i < channels.size(); i++){
+                    if (std::to_string(e_channel_id) == channels[i]){
+                        channelInFile = true;
+                    }
+                }
+
+                //remove channel from file if its there
+                if(channelInFile == true){
+                    //remove channel from vector
+                    int index = 0;
+                    for(int i = 0; i < channels.size(); i++){
+                        if(channels[i] == std::to_string(e_channel_id)){
+                            index = i;
+                        }
+                    }
+                    channels.erase(channels.begin()+index);
+
+                    //write channel vector to file
+                    std::ofstream channelFile;
+                    channelFile.open("channels.txt");
+                    for(int i = 0; i < channels.size(); i++){
+                        channelFile << channels[i] << std::endl;
+                    }
+                    channelFile.close();
+                    event.reply("this channel will no longer recieve down-detection messages.");
+                }
+                else{
+                    event.reply("this channel is not recieving down-detection messages");
                 }
             }
             else{
@@ -71,6 +129,9 @@ void botThread(std::vector<std::string> envData){
                 bot.global_command_create(
                     dpp::slashcommand("watch-mirror", "designates this channel to recieve mirror downtime alerts", bot.me.id)
                 );
+                bot.global_command_create(
+                    dpp::slashcommand("watch-mirror-delete", "removes this channel from the mirror alert list", bot.me.id)
+                );
             }
         }
         //register slash commands for a specific server for testing
@@ -78,6 +139,9 @@ void botThread(std::vector<std::string> envData){
             long long guild_id = std::stoll(envData[2]); //stoll is string to long long
             bot.guild_command_create(
                 dpp::slashcommand("watch-mirror", "designates this channel to recieve mirror downtime alerts \"test\"", bot.me.id)
+            , guild_id);
+            bot.guild_command_create(
+                dpp::slashcommand("watch-mirror-delete", "removes this channel from the mirror alert list \"test\"", bot.me.id)
             , guild_id);
         }
         else{
