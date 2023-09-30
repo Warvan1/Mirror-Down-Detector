@@ -6,15 +6,14 @@
 #include <utility>
 #include <future>
 #include <unistd.h> //linux only library
+#include <thread>
 
 #include <dpp/dpp.h>
 
 #include "readFile.h"
 #include "ping.h"
- 
-int main() {
-    //read env file
-    const std::vector<std::string> envData = readFile("../.env");
+
+void botThread(std::vector<std::string> envData){
 
     dpp::cluster bot(envData[0]);
  
@@ -90,9 +89,21 @@ int main() {
             throw std::invalid_argument("incorrect env file");
         }
         
+    });
+ 
+    bot.start(dpp::st_wait);
+}
+
+void backgroundThread(std::vector<std::string> envData){
+
+    dpp::cluster bot(envData[0]);
+ 
+    bot.on_log(dpp::utility::cout_logger());
+ 
+    bot.on_ready([&bot, &envData](const dpp::ready_t& event){
         for(int i = 0; i < 10; i++){
             //sleep for set time in seconds
-            // sleep(10);
+            sleep(10);
 
             //we use promises to get data out of the callback functions from bot.request
             std::promise<int> promiseStatus;
@@ -139,4 +150,15 @@ int main() {
     });
  
     bot.start(dpp::st_wait);
+}
+ 
+int main() {
+    //read env file
+    const std::vector<std::string> envData = readFile("../.env");
+    
+    std::thread t1(botThread, envData);
+    std::thread t2(backgroundThread, envData);
+
+    t1.join();
+    t2.join();
 }
