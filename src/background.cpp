@@ -20,7 +20,7 @@ void backgroundThread(std::vector<std::string> envData){
     bot.on_ready([&bot, &envData](const dpp::ready_t& event){
         for(int i = 0; i < 10; i++){
             //sleep for set time in seconds
-            // sleep(10);
+            sleep(10);
 
             //we use promises to get data out of the callback functions from bot.request
             std::promise<int> promiseStatus;
