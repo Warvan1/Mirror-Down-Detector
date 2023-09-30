@@ -10,7 +10,7 @@
 
 std::pair<bool, std::string> ping(std::string url){
     //command string made of url
-    std::string command = std::string("ping ") + url + " -c 2 -W 1 >ping.txt";
+    std::string command = std::string("ping ") + url + " -c 3 -W 1 >ping.txt";
     //run the command
     std::system(command.c_str());
     //read the command output from the file into string
@@ -20,7 +20,7 @@ std::pair<bool, std::string> ping(std::string url){
     std::string pingStr = ss.str();
 
     //parse the ping status
-    std::regex expression("(2 packets transmitted, 2 received, 0?)");
+    std::regex expression("(3 packets transmitted, 3 received, 0?)");
     bool up = std::regex_search(pingStr, expression);
     
     //return a status and the ping output
