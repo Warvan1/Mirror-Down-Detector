@@ -18,10 +18,12 @@ dpp::embed createErrorEmbed(std::vector<uint16_t> errorCodes, std::string ping){
     if(errorCodes[0] == 200 && errorCodes[1] == 200 && errorCodes[2] == 1){
         //everything is back to running well
         embed.set_title("Mirror Is Back Up!!!!");
+        embed.set_color(0x00000000); //black hex with 2 FF in front for "alpha"
     }
     else{
         //something is down
         embed.set_title("Mirror Is Down!!!!");
+        embed.set_color(0xFFFF0000); //red hex with 2 FF in front for "alpha"
     }
 
     //create a field for /status page

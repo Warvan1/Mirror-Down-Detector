@@ -12,8 +12,8 @@ int main() {
     const std::vector<std::string> envData = readFile("../.env");
     
     std::thread t1(botThread, envData);
-    std::thread t2(backgroundThread, envData);
+    // std::thread t2(backgroundThread, envData);
 
     t1.join();
-    t2.join();
+    // t2.join();
 }

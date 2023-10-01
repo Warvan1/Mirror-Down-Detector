@@ -111,13 +111,15 @@ void botThread(std::vector<std::string> envData){
                 //create embed footer
                 dpp::embed_footer ef;
                 embed.set_footer(ef.set_text("COSI Mirror Down Detection").set_icon("https://avatars.githubusercontent.com/u/5634011?s=48&v=4"));
-                //create message object
+                //create message object and set color based on ping success
                 std::string messageContent;
                 if(pingObj.first == 1){
                     messageContent = "Success.";
+                    embed.set_color(0x00000000); //black hex with 2 FF in front for "alpha"
                 }
                 else{
                     messageContent = "Failure.";
+                    embed.set_color(0xFFFF0000); //red hex with 2 FF in front for "alpha"
                 }
                 dpp::message message(dpp::snowflake(interaction.channel_id), messageContent);
                 //attach embed to message object
