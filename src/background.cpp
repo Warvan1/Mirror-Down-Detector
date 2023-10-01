@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <string>
 #include <utility>
@@ -18,7 +17,7 @@ dpp::embed createErrorEmbed(std::vector<uint16_t> errorCodes, std::string ping){
 
     if(errorCodes[0] == 200 && errorCodes[1] == 200 && errorCodes[2] == 1){
         //everything is back to running well
-        embed.set_title("Mirror Is Up!!!!");
+        embed.set_title("Mirror Is Back Up!!!!");
     }
     else{
         //something is down
@@ -49,7 +48,7 @@ void backgroundThread(std::vector<std::string> envData){
 
         while(true){
             //sleep for set time in seconds
-            sleep(10);
+            sleep(60);
 
             //we use promises to get data out of the callback functions from bot.request
             std::promise<uint16_t> promiseStatus;
@@ -92,16 +91,18 @@ void backgroundThread(std::vector<std::string> envData){
                 //update error codes
                 errorCodes = currientErrorCodes;
                 //read channel file
-                std::vector<std::string> channels = readFile("channels.txt");
+                std::vector<std::vector<std::string>> channels_roles = readFile2d("channels.txt");
 
                 //send messages to each channel in file
-                for(int i = 0; i < channels.size(); i++){
+                for(int i = 0; i < channels_roles.size(); i++){
                     //currient timestamp
                     std::time_t timestamp = std::time(nullptr);
                     // convet channel id to long long
-                    long long channel_id = std::stoll(channels[i]);
+                    long long channel_id = std::stoll(channels_roles[i][0]);
+                    // convet role ping to string
+                    std::string role_mention = channels_roles[i][1];
                     //create a message object
-                    dpp::message message(dpp::snowflake(channel_id), std::string("<t:") + std::to_string(timestamp) + ":F>");
+                    dpp::message message(dpp::snowflake(channel_id), std::string(role_mention) + " <t:" + std::to_string(timestamp) + ":F>");
                     //create an embed object
                     dpp::embed embed = createErrorEmbed(currientErrorCodes, pingObj.second);
                     //add embed object to message object
