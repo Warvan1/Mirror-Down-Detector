@@ -1,5 +1,19 @@
 # DownDetector bot
 
+To use the bot add the bot to your server with this [Link](https://discord.com/api/oauth2/authorize?client_id=1159278212099088425&permissions=18432&scope=bot)
+
+## Slash commands
+/watch-mirror add {@role}
+Adds the channel the comand is run in to the list of channels watching mirror.
+The role passed in with the command is piged by the bot when there is a status update.
+
+/watch-mirror delete
+Deletes the channel the command is run in from the watch list.
+
+/ping {address}
+used to ping any hostname or ip address.
+# Development Notes
+
 ## Dependencies
 
 Install D++ using instructions on the D++ Documentation Website.
