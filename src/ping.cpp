@@ -20,8 +20,10 @@ std::pair<bool, std::string> ping(std::string url){
     std::string pingStr = ss.str();
 
     //parse the ping status
-    std::regex expression("(3 packets transmitted, 3 received, 0?)");
-    bool up = std::regex_search(pingStr, expression);
+    std::regex expression("(3 packets transmitted, 3 received?)");
+    std::regex expression2("(3 packets transmitted, 2 received?)");
+    
+    bool up = std::regex_search(pingStr, expression) || std::regex_search(pingStr, expression2);
     
     //return a status and the ping output
     std::pair<bool, std::string> pingObj(up, pingStr);
