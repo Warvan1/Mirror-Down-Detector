@@ -1,6 +1,6 @@
 # DownDetector bot
 
-To use the bot add the bot to your server with this [Link](https://discord.com/api/oauth2/authorize?client_id=1159278212099088425&permissions=18432&scope=bot)
+To use the bot add the bot to your server with this [Link](https://discord.com/oauth2/authorize?client_id=1159278212099088425&permissions=158720&scope=bot)
 
 ## Slash commands
 /watch-mirror add {@role}
