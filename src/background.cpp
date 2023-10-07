@@ -105,6 +105,8 @@ void backgroundThread(std::vector<std::string> envData){
                     std::string role_mention = channels_roles[i][1];
                     //create a message object
                     dpp::message message(dpp::snowflake(channel_id), std::string(role_mention) + " <t:" + std::to_string(timestamp) + ":F>");
+                    //make the role pingable in the message
+                    message.set_allowed_mentions(false, true, false, false, std::vector<dpp::snowflake> {}, std::vector<dpp::snowflake> {});
                     //create an embed object
                     dpp::embed embed = createErrorEmbed(currientErrorCodes, pingObj.second);
                     //add embed object to message object
