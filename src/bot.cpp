@@ -36,7 +36,7 @@ void botThread(std::vector<std::string> envData){
 
             if (is_mod == true){
                 //read the channel file into a list of channels and roles
-                std::vector<std::vector<std::string>> channels_roles = readFile2d("channels.txt");
+                std::vector<std::vector<std::string>> channels_roles = readFile2d("../channels.txt");
 
                 //check to see if the channel is in the file to avoid duplicates
                 bool channelInFile = false;
@@ -59,7 +59,7 @@ void botThread(std::vector<std::string> envData){
                         //add channel role pair to channel_roles
                         channels_roles.push_back(std::vector<std::string> {std::to_string(e_channel_id), roleMention});
                         //write channel role vector of vectors to file
-                        writeFile2d(channels_roles, "channels.txt");
+                        writeFile2d(channels_roles, "../channels.txt");
 
                         event.reply("this channel will now recieve down-detection messages.");
                     }
@@ -82,7 +82,7 @@ void botThread(std::vector<std::string> envData){
                         channels_roles.erase(channels_roles.begin()+index);
 
                         //write channel role vector of vectors to file
-                        writeFile2d(channels_roles, "channels.txt");
+                        writeFile2d(channels_roles, "../channels.txt");
 
                         event.reply("this channel will no longer recieve down-detection messages.");
                     }

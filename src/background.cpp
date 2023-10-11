@@ -93,7 +93,7 @@ void backgroundThread(std::vector<std::string> envData){
                 //update error codes
                 errorCodes = currientErrorCodes;
                 //read channel file
-                std::vector<std::vector<std::string>> channels_roles = readFile2d("channels.txt");
+                std::vector<std::vector<std::string>> channels_roles = readFile2d("../channels.txt");
 
                 //send messages to each channel in file
                 for(int i = 0; i < channels_roles.size(); i++){
