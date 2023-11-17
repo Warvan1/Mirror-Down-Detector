@@ -48,6 +48,8 @@ void backgroundThread(std::vector<std::string> envData){
 
         std::vector<uint16_t> errorCodes {200, 200, 1};
 
+        std::time_t most_recient_ping = -1;
+
         while(true){
             //sleep for set time in seconds
             sleep(60);
@@ -92,6 +94,14 @@ void backgroundThread(std::vector<std::string> envData){
             if(sendMessage == true){
                 //update error codes
                 errorCodes = currientErrorCodes;
+
+                //check last discord ping timestamp to see if we should ping on discord with the message to prevent ping spam
+                bool discordPing = false;
+                if(most_recient_ping == -1 || most_recient_ping + 900 <= std::time(0)){ //if 15 minutes have passed since the last discordping (or its the first ping)
+                    most_recient_ping = std::time(0);
+                    discordPing = true;
+                }
+
                 //read channel file
                 std::vector<std::vector<std::string>> channels_roles = readFile2d("../channels.txt");
 
@@ -102,11 +112,16 @@ void backgroundThread(std::vector<std::string> envData){
                     // convet channel id to long long
                     long long channel_id = std::stoll(channels_roles[i][0]);
                     // convet role ping to string
-                    std::string role_mention = channels_roles[i][1];
+                    std::string role_mention = "";
+                    if(discordPing == true){
+                        role_mention = channels_roles[i][1] + " ";
+                    }
                     //create a message object
-                    dpp::message message(dpp::snowflake(channel_id), std::string(role_mention) + " <t:" + std::to_string(timestamp) + ":F>");
+                    dpp::message message(dpp::snowflake(channel_id), std::string(role_mention) + "<t:" + std::to_string(timestamp) + ":F>");
                     //make the role pingable in the message
-                    message.set_allowed_mentions(false, true, false, false, std::vector<dpp::snowflake> {}, std::vector<dpp::snowflake> {});
+                    if(discordPing == true){
+                        message.set_allowed_mentions(false, true, false, false, std::vector<dpp::snowflake> {}, std::vector<dpp::snowflake> {});
+                    }
                     //create an embed object
                     dpp::embed embed = createErrorEmbed(currientErrorCodes, pingObj.second);
                     //add embed object to message object
