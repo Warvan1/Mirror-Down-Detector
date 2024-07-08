@@ -46,6 +46,7 @@ void backgroundThread(std::vector<std::string> envData){
  
     bot.on_ready([&bot, &envData](const dpp::ready_t& event){
 
+        uint16_t state = 0;
         std::vector<uint16_t> errorCodes {200, 200, 1};
 
         std::time_t most_recient_ping = -1;
@@ -82,15 +83,36 @@ void backgroundThread(std::vector<std::string> envData){
             //create currient error codes object
             std::vector<uint16_t> currientErrorCodes = {statusInt, homeInt, pingObj.first};
 
-            //compare currient status codes to errorCodes vector
+            //handle the state machine
             bool sendMessage = false;
-            for(int i = 0; i < errorCodes.size(); i++){
-                if(errorCodes[i] != currientErrorCodes[i]){
+            switch(state){
+                case 0:
+                case 1:
+                    if(currientErrorCodes[0] == 200 && currientErrorCodes[1] == 200 && currientErrorCodes[2] == 1){
+                        state = 0;
+                    }
+                    else{
+                        state++;
+                    }
+                break;
+                case 2:
+                    state = 3;
                     sendMessage = true;
-                }
+                break;
+                case 3:
+                    if(currientErrorCodes[0] == 200 && currientErrorCodes[1] == 200 && currientErrorCodes[2] == 1){
+                        state = 0;
+                        sendMessage = true;
+                    }
+                    else{
+                        for(uint16_t i = 0; i < errorCodes.size(); i++){
+                            if(errorCodes[i] != currientErrorCodes[i]){
+                                sendMessage = true;
+                            }
+                        }
+                    }
             }
 
-            //send message (and update errorCodes) when there is a change
             if(sendMessage == true){
                 //update error codes
                 errorCodes = currientErrorCodes;
