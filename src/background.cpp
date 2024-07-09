@@ -93,13 +93,12 @@ void backgroundThread(std::vector<std::string> envData){
                     }
                     else{
                         state++;
+                        if(state == 2){
+                            sendMessage = true;
+                        }
                     }
                 break;
                 case 2:
-                    state = 3;
-                    sendMessage = true;
-                break;
-                case 3:
                     if(currientErrorCodes[0] == 200 && currientErrorCodes[1] == 200 && currientErrorCodes[2] == 1){
                         state = 0;
                         sendMessage = true;
